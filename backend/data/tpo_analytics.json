@@ -1,0 +1,49 @@
+{
+  "institution_name": "National Institute of Technology & Engineering",
+  "academic_year": "2025-2026",
+  "total_students_tracked": 2500,
+  "cohort_readiness_distribution": {
+    "career_ready_pct": 42,
+    "nearly_ready_pct": 31,
+    "skill_gap_pct": 20,
+    "high_risk_pct": 7
+  },
+  "top_missing_skills": [
+    {"skill": "Cloud & AWS", "missing_pct": 72, "affected_students": 1800, "recommendation": "Introduce mandatory AWS Cloud Practitioner labs in Semester 6"},
+    {"skill": "Data Structures & Algorithms", "missing_pct": 61, "affected_students": 1525, "recommendation": "Host weekly competitive programming mock rounds"},
+    {"skill": "AI / Machine Learning", "missing_pct": 58, "affected_students": 1450, "recommendation": "Integrate practical scikit-learn & PyTorch mini-projects"},
+    {"skill": "Professional Communication", "missing_pct": 51, "affected_students": 1275, "recommendation": "Mandate AI Mock Interview Simulator practice"},
+    {"skill": "Cybersecurity Fundamentals", "missing_pct": 39, "affected_students": 975, "recommendation": "Run network vulnerability assessment hackathons"}
+  ],
+  "departments": [
+    {
+      "name": "Computer Science & Engineering",
+      "students_count": 850,
+      "career_ready_pct": 58,
+      "top_career_path": "Software Engineer (86% Avg Match)",
+      "avg_readiness": 84
+    },
+    {
+      "name": "Information Technology",
+      "students_count": 650,
+      "career_ready_pct": 46,
+      "top_career_path": "Full Stack / Cloud Engineer (81% Avg Match)",
+      "avg_readiness": 79
+    },
+    {
+      "name": "AI & Data Science",
+      "students_count": 550,
+      "career_ready_pct": 41,
+      "top_career_path": "Data & ML Engineer (78% Avg Match)",
+      "avg_readiness": 77
+    },
+    {
+      "name": "Electronics & Communication",
+      "students_count": 450,
+      "career_ready_pct": 24,
+      "top_career_path": "Embedded / IoT Systems (71% Avg Match)",
+      "avg_readiness": 68
+    }
+  ],
+  "key_institutional_insight": "Placement readiness has improved by +14% since integrating SkillMap Adaptive Skill Verification. The primary bottleneck holding back tier-1 tech offers is Cloud Infrastructure (72% missing) and System Design Basics."
+}

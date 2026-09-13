@@ -1,0 +1,43 @@
+{
+  "categories": {
+    "programming": [
+      "python", "javascript", "typescript", "java", "c++", "c#", "go", "rust", "php", "ruby", "sql", "html", "css", "r", "scala"
+    ],
+    "frontend": [
+      "react", "react.js", "next.js", "vue", "vue.js", "angular", "tailwind", "tailwind css", "redux", "html5", "css3", "vite", "webpack", "responsive design", "pwa"
+    ],
+    "backend": [
+      "fastapi", "django", "flask", "node.js", "express", "express.js", "spring boot", "ruby on rails", "graphql", "rest api", "restful apis", "grpc", "microservices"
+    ],
+    "cloud_devops": [
+      "docker", "containers", "kubernetes", "aws", "amazon web services", "azure", "gcp", "google cloud", "ci/cd", "github actions", "terraform", "ansible", "linux", "nginx", "jenkins"
+    ],
+    "database": [
+      "postgresql", "postgres", "neon", "neon.tech", "mysql", "mongodb", "redis", "sqlite", "firebase", "cassandra", "dynamodb", "elasticsearch"
+    ],
+    "data_ai": [
+      "machine learning", "deep learning", "nlp", "natural language processing", "spacy", "scikit-learn", "sklearn", "pandas", "numpy", "pytorch", "tensorflow", "data analysis", "data structures & algorithms", "dsa", "data engineering", "computer vision"
+    ],
+    "system_design": [
+      "system design", "system design basics", "distributed systems", "caching", "load balancing", "database sharding", "message queues", "kafka", "rabbitmq", "api design"
+    ],
+    "soft_skills": [
+      "problem solving", "communication", "leadership", "collaboration", "agile", "scrum", "creativity", "critical thinking", "presentation"
+    ]
+  },
+  "skill_aliases": {
+    "react.js": "react",
+    "reactjs": "react",
+    "tailwind": "tailwind css",
+    "node": "node.js",
+    "nodejs": "node.js",
+    "postgres": "postgresql",
+    "dsa": "data structures & algorithms",
+    "sklearn": "scikit-learn",
+    "k8s": "kubernetes",
+    "amazon web services": "aws",
+    "google cloud platform": "gcp",
+    "restful api": "rest api",
+    "nlp": "natural language processing"
+  }
+}

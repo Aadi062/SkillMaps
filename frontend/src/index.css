@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+body {
+  background-color: #070b14;
+  color: #f1f5f9;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar for sleek dark dashboard */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #232f48;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b4d75;
+}
+
+/* Glass panel utility */
+.glass-panel {
+  background: rgba(14, 21, 38, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(20, 30, 55, 0.6) 0%, rgba(11, 17, 32, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}

@@ -1,0 +1,118 @@
+{
+  "careers": [
+    {
+      "id": "software_engineer",
+      "title": "Software Engineer",
+      "match_rank": 1,
+      "description": "Designs, develops, and maintains scalable software applications, core APIs, and system architectures.",
+      "required_skills": {
+        "python": 0.85,
+        "javascript": 0.80,
+        "react": 0.75,
+        "system design": 0.80,
+        "data structures & algorithms": 0.85,
+        "docker": 0.70,
+        "sql": 0.75,
+        "git": 0.85,
+        "ci/cd": 0.70,
+        "rest api": 0.85
+      },
+      "competencies": {
+        "problem_solving": 88,
+        "programming": 92,
+        "data_analysis": 76,
+        "creativity": 70,
+        "communication": 65,
+        "leadership": 60
+      },
+      "key_gaps": [
+        {"skill": "System Design", "current": 40, "required": 80, "gap": 40},
+        {"skill": "Docker", "current": 30, "required": 70, "gap": 40},
+        {"skill": "AWS", "current": 35, "required": 75, "gap": 40},
+        {"skill": "CI/CD", "current": 45, "required": 70, "gap": 25},
+        {"skill": "Kubernetes", "current": 20, "required": 60, "gap": 40}
+      ]
+    },
+    {
+      "id": "data_engineer",
+      "title": "Data Engineer",
+      "match_rank": 2,
+      "description": "Constructs data pipelines, database architectures, ETL processes, and big data processing systems.",
+      "required_skills": {
+        "python": 0.90,
+        "sql": 0.90,
+        "postgresql": 0.85,
+        "kafka": 0.75,
+        "docker": 0.70,
+        "aws": 0.80,
+        "data analysis": 0.85,
+        "distributed systems": 0.75
+      },
+      "competencies": {
+        "problem_solving": 82,
+        "programming": 84,
+        "data_analysis": 94,
+        "creativity": 60,
+        "communication": 62,
+        "leadership": 58
+      },
+      "key_gaps": [
+        {"skill": "Data Pipelines (ETL)", "current": 35, "required": 85, "gap": 50},
+        {"skill": "Apache Kafka", "current": 20, "required": 75, "gap": 55},
+        {"skill": "AWS Glue/S3", "current": 30, "required": 80, "gap": 50}
+      ]
+    },
+    {
+      "id": "ai_ml_engineer",
+      "title": "AI/ML Engineer",
+      "match_rank": 3,
+      "description": "Builds and trains machine learning models, NLP pipelines, deep neural networks, and AI integration services.",
+      "required_skills": {
+        "python": 0.95,
+        "scikit-learn": 0.90,
+        "pytorch": 0.85,
+        "nlp": 0.85,
+        "spacy": 0.80,
+        "data structures & algorithms": 0.80,
+        "docker": 0.70
+      },
+      "competencies": {
+        "problem_solving": 90,
+        "programming": 88,
+        "data_analysis": 92,
+        "creativity": 75,
+        "communication": 60,
+        "leadership": 55
+      },
+      "key_gaps": [
+        {"skill": "PyTorch / Deep Learning", "current": 30, "required": 85, "gap": 55},
+        {"skill": "Model Deployment (MLOps)", "current": 25, "required": 75, "gap": 50}
+      ]
+    },
+    {
+      "id": "cybersecurity_analyst",
+      "title": "Cybersecurity Analyst",
+      "match_rank": 4,
+      "description": "Protects systems and networks from security vulnerabilities, threat vectors, and ensures policy compliance.",
+      "required_skills": {
+        "linux": 0.85,
+        "networking": 0.85,
+        "python": 0.70,
+        "security audit": 0.80,
+        "cryptography": 0.75
+      },
+      "competencies": {
+        "problem_solving": 80,
+        "programming": 65,
+        "data_analysis": 72,
+        "creativity": 55,
+        "communication": 70,
+        "leadership": 62
+      },
+      "key_gaps": [
+        {"skill": "Network Penetration Testing", "current": 20, "required": 80, "gap": 60},
+        {"skill": "Security Compliance & SIEM", "current": 15, "required": 75, "gap": 60}
+      ]
+    }
+  ]
+}

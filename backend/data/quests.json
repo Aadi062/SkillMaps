@@ -1,0 +1,74 @@
+[
+  {
+    "id": "quest_01",
+    "title": "Build an AI To-Do Application",
+    "difficulty": "Intermediate",
+    "category": "Full Stack & AI",
+    "description": "Don't just learn React—prove it by building an AI-assisted task manager with smart priority suggestions, RESTful API endpoints, and database persistence.",
+    "required_skills": ["React", "JavaScript", "REST API", "Git", "Database"],
+    "rewards": {
+      "skills": [
+        {"skill": "React", "boost": 10},
+        {"skill": "REST API", "boost": 8},
+        {"skill": "Git", "boost": 5}
+      ],
+      "portfolio_strength": 12,
+      "xp": 350,
+      "badge": "React Builder Quest"
+    },
+    "deliverables": [
+      "Responsive React UI with Tailwind CSS",
+      "FastAPI or Express backend with CRUD operations",
+      "Git repository with atomic commits and README architecture"
+    ],
+    "status": "Available"
+  },
+  {
+    "id": "quest_02",
+    "title": "Distributed URL Shortener with Caching",
+    "difficulty": "Advanced",
+    "category": "System Design",
+    "description": "Prove your System Design and Docker skills. Architect a high-throughput URL shortener with Redis caching, PostgreSQL sharding, and rate limiting.",
+    "required_skills": ["System Design", "Docker", "Redis", "PostgreSQL", "Python"],
+    "rewards": {
+      "skills": [
+        {"skill": "System Design", "boost": 15},
+        {"skill": "Docker", "boost": 12},
+        {"skill": "Redis", "boost": 10}
+      ],
+      "portfolio_strength": 18,
+      "xp": 500,
+      "badge": "System Architect"
+    },
+    "deliverables": [
+      "Docker Compose orchestration with Redis & PostgreSQL",
+      "Base62 encoding hash generator & token bucket rate limiter",
+      "Benchmarked throughput documentation (>2,000 req/sec)"
+    ],
+    "status": "In Progress"
+  },
+  {
+    "id": "quest_03",
+    "title": "Real-Time Streaming Telemetry Pipeline",
+    "difficulty": "Advanced",
+    "category": "Data Engineering",
+    "description": "Construct an end-to-end event streaming pipeline using Kafka/Redpanda and PostgreSQL, ingesting simulated IoT/clickstream metrics.",
+    "required_skills": ["Python", "SQL", "Kafka", "Data Engineering", "Docker"],
+    "rewards": {
+      "skills": [
+        {"skill": "Data Engineering", "boost": 14},
+        {"skill": "SQL", "boost": 8},
+        {"skill": "Docker", "boost": 6}
+      ],
+      "portfolio_strength": 16,
+      "xp": 450,
+      "badge": "Stream Master"
+    },
+    "deliverables": [
+      "Producer script streaming JSON events",
+      "Consumer worker batching inserts into partitioned tables",
+      "Analytical aggregation queries with window functions"
+    ],
+    "status": "Available"
+  }
+]

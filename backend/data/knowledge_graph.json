@@ -1,0 +1,37 @@
+{
+  "nodes": [
+    {"id": "python", "label": "Python", "group": "skill", "level": 92, "category": "Programming"},
+    {"id": "react", "label": "React.js", "group": "skill", "level": 85, "category": "Frontend"},
+    {"id": "fastapi", "label": "FastAPI", "group": "skill", "level": 84, "category": "Backend"},
+    {"id": "docker", "label": "Docker", "group": "skill", "level": 30, "category": "DevOps"},
+    {"id": "system_design", "label": "System Design", "group": "skill", "level": 40, "category": "Architecture"},
+    {"id": "sql", "label": "SQL / PostgreSQL", "group": "skill", "level": 78, "category": "Database"},
+    {"id": "aws", "label": "AWS Cloud", "group": "skill", "level": 35, "category": "Cloud"},
+    
+    {"id": "role_swe", "label": "Software Engineer", "group": "career", "match": "88%"},
+    {"id": "role_data", "label": "Data Engineer", "group": "career", "match": "81%"},
+    {"id": "role_aiml", "label": "AI/ML Engineer", "group": "career", "match": "74%"},
+
+    {"id": "proj_chatbot", "label": "AI Chatbot", "group": "project", "status": "Completed"},
+    {"id": "proj_ecommerce", "label": "E-Commerce API", "group": "project", "status": "In Progress"},
+
+    {"id": "quest_todo", "label": "Quest: AI Task Manager", "group": "quest", "xp": 350},
+    {"id": "quest_url", "label": "Quest: Distributed URL Shortener", "group": "quest", "xp": 500}
+  ],
+  "links": [
+    {"source": "python", "target": "role_swe", "relationship": "core_requirement"},
+    {"source": "python", "target": "role_data", "relationship": "core_requirement"},
+    {"source": "python", "target": "role_aiml", "relationship": "core_requirement"},
+    {"source": "react", "target": "role_swe", "relationship": "frontend_stack"},
+    {"source": "fastapi", "target": "proj_chatbot", "relationship": "implemented_in"},
+    {"source": "python", "target": "proj_chatbot", "relationship": "implemented_in"},
+    {"source": "react", "target": "proj_chatbot", "relationship": "implemented_in"},
+    {"source": "docker", "target": "proj_ecommerce", "relationship": "containerized_with"},
+    {"source": "system_design", "target": "role_swe", "relationship": "critical_gap"},
+    {"source": "docker", "target": "role_swe", "relationship": "critical_gap"},
+    {"source": "aws", "target": "role_swe", "relationship": "critical_gap"},
+    {"source": "react", "target": "quest_todo", "relationship": "proves_skill"},
+    {"source": "system_design", "target": "quest_url", "relationship": "proves_skill"},
+    {"source": "docker", "target": "quest_url", "relationship": "proves_skill"}
+  ]
+}
