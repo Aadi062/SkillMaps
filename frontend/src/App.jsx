@@ -21,6 +21,7 @@ import Robot3D from './components/Robot3D';
 import TextbookReader from './components/TextbookReader';
 import ApiKeyManagerModal from './components/ApiKeyManagerModal';
 import ColabModal from './components/ColabModal';
+import SecurityShieldModal from './components/SecurityShieldModal';
 
 import { 
   fetchProfile, 
@@ -59,6 +60,7 @@ export default function App() {
   const [isFloatingRobotOpen, setIsFloatingRobotOpen] = useState(false);
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [isColabModalOpen, setIsColabModalOpen] = useState(false);
+  const [isShieldModalOpen, setIsShieldModalOpen] = useState(false);
 
   useEffect(() => {
     async function initData() {
@@ -99,13 +101,14 @@ export default function App() {
   const handleVerificationComplete = (verifyResult) => {
     setProfile((prev) => ({
       ...prev,
-      career_readiness_score: Math.min(98, prev.career_readiness_score + 1)
+      career_readiness_score: verifyResult.new_readiness_score,
+      xp: prev.xp + 150
     }));
   };
 
   return (
-    <div className="min-h-screen bg-[#070b14] text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
-      {/* Top Header */}
+    <div className="min-h-screen bg-[#060913] text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+      {/* Platform Header */}
       <Header
         profile={profile}
         viewMode={viewMode}
@@ -116,6 +119,7 @@ export default function App() {
         onOpenRobot3D={() => setActiveTab('robot3d')}
         onOpenApiKeys={() => setIsApiKeyModalOpen(true)}
         onOpenColab={() => setIsColabModalOpen(true)}
+        onOpenShield={() => setIsShieldModalOpen(true)}
       />
 
       <div className="flex-1 flex w-full">
@@ -578,6 +582,11 @@ export default function App() {
       <ColabModal
         isOpen={isColabModalOpen}
         onClose={() => setIsColabModalOpen(false)}
+      />
+
+      <SecurityShieldModal
+        isOpen={isShieldModalOpen}
+        onClose={() => setIsShieldModalOpen(false)}
       />
     </div>
   );

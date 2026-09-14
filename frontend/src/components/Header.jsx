@@ -11,7 +11,8 @@ import {
   Server,
   Sparkles,
   Key,
-  Cloud
+  Cloud,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function Header({ 
@@ -23,7 +24,8 @@ export default function Header({
   onOpenResumeModal,
   onOpenRobot3D,
   onOpenApiKeys,
-  onOpenColab
+  onOpenColab,
+  onOpenShield
 }) {
   return (
     <header className="sticky top-0 z-40 w-full bg-[#090d18]/90 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-6 py-3">
@@ -123,6 +125,17 @@ export default function Header({
           >
             <Cloud className="w-3.5 h-3.5 text-orange-400" />
             <span className="hidden lg:inline">Colab</span>
+          </button>
+
+          {/* SkillMap Shield Cybersecurity Center */}
+          <button
+            onClick={onOpenShield}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 rounded-lg transition-all shadow-glow-emerald"
+            title="SkillMap Shield Cybersecurity Center (L7 WAF & Threat Defense Active)"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden sm:inline">Shield: Armed</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
           </button>
 
           {/* Mobile Simulator Toggle Button */}
