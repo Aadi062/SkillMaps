@@ -118,9 +118,35 @@ export async function fetchRoadmap() {
   };
 }
 
-export async function fetchOpportunities(category = "All") {
+export async function fetchOpportunities(param = "All") {
+  let category = "All";
+  let region = "All";
+  let search = "";
+  let domain = "All";
+  let country = "All";
+  let limit = 120;
+
+  if (typeof param === 'string') {
+    category = param;
+  } else if (param && typeof param === 'object') {
+    category = param.category || "All";
+    region = param.region || "All";
+    search = param.search || "";
+    domain = param.domain || "All";
+    country = param.country || "All";
+    limit = param.limit || 120;
+  }
+
   try {
-    const res = await fetch(`${API_BASE_URL}/api/opportunities?category=${encodeURIComponent(category)}`);
+    const query = new URLSearchParams({
+      category,
+      region,
+      search,
+      domain,
+      country,
+      limit: String(limit)
+    });
+    const res = await fetch(`${API_BASE_URL}/api/opportunities?${query.toString()}`);
     if (res.ok) return await res.json();
   } catch (err) {
     console.warn("Using fallback opportunities", err);

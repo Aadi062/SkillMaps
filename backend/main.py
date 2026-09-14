@@ -190,14 +190,25 @@ def get_roadmap():
     }
 
 @app.get("/api/opportunities")
-def list_opportunities(category: Optional[str] = None):
-    """Returns job, internship, and hackathon opportunities."""
+def list_opportunities(
+    category: Optional[str] = None,
+    region: Optional[str] = None,
+    search: Optional[str] = None,
+    domain: Optional[str] = None,
+    country: Optional[str] = None,
+    limit: Optional[int] = 120
+):
+    """Returns job, internship, and hackathon opportunities from the Worldwide Catalog (860+ jobs)."""
     user_skills = [s["name"] for s in CURRENT_PROFILE["verified_skills"]]
-    items = get_opportunities(category_filter=category, user_skills=user_skills)
-    return {
-        "count": len(items),
-        "opportunities": items
-    }
+    return get_opportunities(
+        category_filter=category,
+        user_skills=user_skills,
+        region_filter=region,
+        search_query=search,
+        domain_filter=domain,
+        country_filter=country,
+        limit=limit
+    )
 
 @app.post("/api/coach/chat")
 def coach_chat(payload: ChatRequest):
