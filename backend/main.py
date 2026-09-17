@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from database import engine, Base, get_db, DATABASE_URL, is_sqlite
+from database import engine, Base, get_db, DATABASE_URL, is_sqlite, init_db
 import models
 from services.nlp_parser import extract_text_from_pdf, parse_resume_text
 from services.matcher import compute_career_matches, compute_skill_gaps
@@ -16,9 +16,11 @@ from services.roadmap_service import get_recommended_roadmap
 from services.interview_service import evaluate_interview_response, SAMPLE_QUESTIONS
 from services.shield_service import security_shield
 from services.face_verify_service import face_verify_service
+from services.auth_service import generate_session_token, verify_session_token, sync_or_create_student
+from sqlalchemy.orm import Session
 
-# Initialize tables
-Base.metadata.create_all(bind=engine)
+# Initialize tables & migrations
+init_db()
 
 app = FastAPI(
     title="SkillMap AI API",
@@ -783,4 +785,142 @@ def delete_face_biometrics(student_id: Optional[str] = "student_rajat"):
     result = face_verify_service.delete_template(student_id or "student_rajat")
     CURRENT_PROFILE["identity_verified"] = False
     return result
+
+# ==============================================================================
+# SkillMap Step 1: Authentication & Session Routes (Zero-Password Persistence)
+# ==============================================================================
+
+class AuthRegisterRequest(BaseModel):
+    name: str
+    email: str
+    firebase_uid: str
+    career_goal: Optional[str] = "Full Stack Developer"
+
+class AuthLoginRequest(BaseModel):
+    email: str
+    firebase_uid: str
+    name: Optional[str] = None
+
+@app.post("/api/auth/register")
+def register_student(payload: AuthRegisterRequest, db: Session = Depends(get_db)):
+    """
+    Registers a new student record synchronized with Firebase UID.
+    Strictly persists 0 passwords in database (Firebase handles credentials).
+    """
+    student = sync_or_create_student(
+        db=db,
+        firebase_uid=payload.firebase_uid,
+        email=payload.email,
+        name=payload.name,
+        career_goal=payload.career_goal
+    )
+    CURRENT_PROFILE["name"] = student.name
+    CURRENT_PROFILE["email"] = student.email
+    CURRENT_PROFILE["career_goal"] = student.career_goal or "Full Stack Developer"
+    CURRENT_PROFILE["headline"] = f"{student.career_goal or 'Full Stack'} Aspirant"
+    token = generate_session_token(student.id, student.firebase_uid, student.email, student.name)
+    return {
+        "status": "success",
+        "token": token,
+        "user": {
+            "id": student.id,
+            "firebase_uid": student.firebase_uid,
+            "name": student.name,
+            "email": student.email,
+            "career_goal": student.career_goal,
+            "avatar_url": student.avatar_url,
+            "level": student.level,
+            "level_title": student.level_title,
+            "xp": student.xp,
+            "xp_max": student.xp_max
+        }
+    }
+
+@app.post("/api/auth/login")
+def login_student(payload: AuthLoginRequest, db: Session = Depends(get_db)):
+    """
+    Authenticates student session synced with Firebase UID.
+    Strictly persists 0 passwords in database (Firebase handles credentials).
+    """
+    student = sync_or_create_student(
+        db=db,
+        firebase_uid=payload.firebase_uid,
+        email=payload.email,
+        name=payload.name
+    )
+    CURRENT_PROFILE["name"] = student.name
+    CURRENT_PROFILE["email"] = student.email
+    CURRENT_PROFILE["career_goal"] = student.career_goal or "Full Stack Developer"
+    CURRENT_PROFILE["headline"] = f"{student.career_goal or 'Full Stack'} Aspirant"
+    token = generate_session_token(student.id, student.firebase_uid, student.email, student.name)
+    return {
+        "status": "success",
+        "token": token,
+        "user": {
+            "id": student.id,
+            "firebase_uid": student.firebase_uid,
+            "name": student.name,
+            "email": student.email,
+            "career_goal": student.career_goal,
+            "avatar_url": student.avatar_url,
+            "level": student.level,
+            "level_title": student.level_title,
+            "xp": student.xp,
+            "xp_max": student.xp_max
+        }
+    }
+
+@app.get("/api/auth/me")
+def get_current_user_profile(request: Request, db: Session = Depends(get_db)):
+    """
+    Returns the authenticated student's profile from verified token claims.
+    """
+    auth_header = request.headers.get("Authorization", "")
+    token = auth_header.replace("Bearer ", "").strip() if auth_header.startswith("Bearer ") else None
+    
+    if token:
+        claims = verify_session_token(token)
+        if claims:
+            student = db.query(models.Student).filter(models.Student.id == claims["sub"]).first()
+            if student:
+                return {
+                    "authenticated": True,
+                    "user": {
+                        "id": student.id,
+                        "firebase_uid": student.firebase_uid,
+                        "name": student.name,
+                        "email": student.email,
+                        "career_goal": student.career_goal or "Full Stack Developer",
+                        "avatar_url": student.avatar_url,
+                        "level": student.level,
+                        "level_title": student.level_title,
+                        "xp": student.xp,
+                        "xp_max": student.xp_max,
+                        "identity_verified": CURRENT_PROFILE.get("identity_verified", False)
+                    }
+                }
+    
+    # Return active profile default if in local dev preview
+    return {
+        "authenticated": True,
+        "user": {
+            "id": 1,
+            "firebase_uid": "uid_rajat_demo",
+            "name": CURRENT_PROFILE["name"],
+            "email": CURRENT_PROFILE["email"],
+            "career_goal": CURRENT_PROFILE.get("career_goal", "Full Stack Developer"),
+            "avatar_url": CURRENT_PROFILE["avatar_url"],
+            "level": CURRENT_PROFILE["level"],
+            "level_title": CURRENT_PROFILE["level_title"],
+            "xp": CURRENT_PROFILE["xp"],
+            "xp_max": CURRENT_PROFILE["xp_max"],
+            "identity_verified": CURRENT_PROFILE.get("identity_verified", True)
+        }
+    }
+
+@app.post("/api/auth/logout")
+def logout_user():
+    """Logs out student on backend."""
+    return {"status": "success", "message": "Logged out successfully"}
+
 

@@ -10,6 +10,7 @@ class Student(Base):
     firebase_uid = Column(String, unique=True, index=True, nullable=True)
     name = Column(String, default="Rajat Verma")
     email = Column(String, unique=True, index=True, default="rajat@skillmap.ai")
+    career_goal = Column(String, default="Full Stack Developer")
     avatar_url = Column(String, default="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150")
     level = Column(Integer, default=4)
     level_title = Column(String, default="Builder")

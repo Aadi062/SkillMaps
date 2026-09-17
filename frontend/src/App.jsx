@@ -23,6 +23,9 @@ import ApiKeyManagerModal from './components/ApiKeyManagerModal';
 import ColabModal from './components/ColabModal';
 import SecurityShieldModal from './components/SecurityShieldModal';
 import FaceVerifyModal from './components/FaceVerifyModal';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 import { 
   fetchProfile, 
@@ -45,7 +48,8 @@ import {
   Cloud
 } from 'lucide-react';
 
-export default function App() {
+function DashboardApp() {
+  const { userProfile } = useAuth();
   const [profile, setProfile] = useState(null);
   const [careerDNA, setCareerDNA] = useState(null);
   const [skillGaps, setSkillGaps] = useState(null);
@@ -72,13 +76,14 @@ export default function App() {
         fetchSkillGaps(),
         fetchRoadmap()
       ]);
-      setProfile(profData);
+      const merged = { ...(profData || {}), ...(userProfile || {}) };
+      setProfile(merged);
       setCareerDNA(dnaData);
       setSkillGaps(gapData);
       setRoadmap(roadData);
     }
     initData();
-  }, []);
+  }, [userProfile]);
 
   const handleProfileUpdated = (newResult) => {
     if (newResult.new_career_readiness) {
@@ -615,3 +620,37 @@ export default function App() {
     </div>
   );
 }
+
+function AuthGate() {
+  const { isAuthenticated, loading } = useAuth();
+  const [authView, setAuthView] = useState('login'); // 'login' or 'register'
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-200">
+        <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mb-4 shadow-glow-indigo" />
+        <p className="text-xs text-slate-400 font-mono tracking-widest uppercase">
+          Initializing SkillMap AI Gateway...
+        </p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    if (authView === 'register') {
+      return <Register onSwitchToLogin={() => setAuthView('login')} />;
+    }
+    return <Login onSwitchToRegister={() => setAuthView('register')} />;
+  }
+
+  return <DashboardApp />;
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AuthGate />
+    </AuthProvider>
+  );
+}
+
