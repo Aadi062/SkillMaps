@@ -22,6 +22,7 @@ import TextbookReader from './components/TextbookReader';
 import ApiKeyManagerModal from './components/ApiKeyManagerModal';
 import ColabModal from './components/ColabModal';
 import SecurityShieldModal from './components/SecurityShieldModal';
+import FaceVerifyModal from './components/FaceVerifyModal';
 
 import { 
   fetchProfile, 
@@ -61,6 +62,7 @@ export default function App() {
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [isColabModalOpen, setIsColabModalOpen] = useState(false);
   const [isShieldModalOpen, setIsShieldModalOpen] = useState(false);
+  const [isFaceVerifyModalOpen, setIsFaceVerifyModalOpen] = useState(false);
 
   useEffect(() => {
     async function initData() {
@@ -106,6 +108,15 @@ export default function App() {
     }));
   };
 
+  const handleFaceVerified = (verifyResult) => {
+    setProfile((prev) => ({
+      ...prev,
+      identity_verified: true,
+      identity_badge: "Identity: Verified ✅",
+      confidence_score: verifyResult?.confidence_score || 98.4
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-[#060913] text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
       {/* Platform Header */}
@@ -120,6 +131,7 @@ export default function App() {
         onOpenApiKeys={() => setIsApiKeyModalOpen(true)}
         onOpenColab={() => setIsColabModalOpen(true)}
         onOpenShield={() => setIsShieldModalOpen(true)}
+        onOpenFaceVerify={() => setIsFaceVerifyModalOpen(true)}
       />
 
       <div className="flex-1 flex w-full">
@@ -141,7 +153,7 @@ export default function App() {
               <StudentJourney
                 activeStepIndex={4}
                 onStepClick={(num) => {
-                  if (num === 1) setIsResumeModalOpen(true);
+                  if (num === 1) setIsFaceVerifyModalOpen(true);
                   if (num === 2) setActiveTab('verification');
                   if (num === 3) setActiveTab('careerdna');
                   if (num === 4) setActiveTab('roadmap');
@@ -173,6 +185,7 @@ export default function App() {
                         onViewSkillGaps={() => setActiveTab('careerdna')}
                         onViewRoadmap={() => setActiveTab('roadmap')}
                         onNavigateTab={(tab) => setActiveTab(tab)}
+                        onOpenFaceVerify={() => setIsFaceVerifyModalOpen(true)}
                       />
                     </div>
 
@@ -293,7 +306,10 @@ export default function App() {
 
               {/* 3. SKILL VERIFICATION TAB */}
               {activeTab === 'verification' && (
-                <AdaptiveSkillVerification onVerificationComplete={handleVerificationComplete} />
+                <AdaptiveSkillVerification 
+                  onVerificationComplete={handleVerificationComplete} 
+                  onOpenFaceVerify={() => setIsFaceVerifyModalOpen(true)}
+                />
               )}
 
               {/* 4. PROJECT QUESTS TAB */}
@@ -459,7 +475,9 @@ export default function App() {
               {activeTab === 'opportunities' && <OpportunityEngine />}
 
               {/* 9. INTERVIEW PREP TAB */}
-              {activeTab === 'interview' && <InterviewSimulator />}
+              {activeTab === 'interview' && (
+                <InterviewSimulator onOpenFaceVerify={() => setIsFaceVerifyModalOpen(true)} />
+              )}
 
               {/* 10. KNOWLEDGE GRAPH TAB */}
               {activeTab === 'knowledgegraph' && <CareerKnowledgeGraph />}
@@ -587,6 +605,12 @@ export default function App() {
       <SecurityShieldModal
         isOpen={isShieldModalOpen}
         onClose={() => setIsShieldModalOpen(false)}
+      />
+
+      <FaceVerifyModal
+        isOpen={isFaceVerifyModalOpen}
+        onClose={() => setIsFaceVerifyModalOpen(false)}
+        onVerificationSuccess={handleFaceVerified}
       />
     </div>
   );

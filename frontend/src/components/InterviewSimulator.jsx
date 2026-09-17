@@ -8,12 +8,13 @@ import {
   AlertCircle, 
   ArrowRight, 
   RefreshCw,
-  Loader2
+  Loader2,
+  ScanFace
 } from 'lucide-react';
 import { evaluateInterview } from '../services/api';
 import confetti from 'canvas-confetti';
 
-export default function InterviewSimulator() {
+export default function InterviewSimulator({ onOpenFaceVerify }) {
   const [selectedRole, setSelectedRole] = useState('Python Developer');
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answerText, setAnswerText] = useState(
@@ -108,6 +109,35 @@ export default function InterviewSimulator() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* SkillMap FaceVerify Pre-Interview Gate */}
+      <div className="mb-5 p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0">
+            <ScanFace className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-bold text-white">Candidate Identity Gate:</span>
+              <span className="text-[11px] font-bold text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                Verified Candidate (Rajat Verma) ✅
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400">
+              Face matched template (98.4% Confidence). Integrity confirmed for AI interview evaluation.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={onOpenFaceVerify}
+          className="text-xs font-semibold text-cyan-300 hover:text-cyan-200 px-3 py-1.5 rounded-lg bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/40 flex items-center gap-1.5 shrink-0 transition-all shadow-glow-cyan"
+        >
+          <ScanFace className="w-3.5 h-3.5" />
+          <span>FaceVerify Gate</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

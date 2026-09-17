@@ -15,11 +15,11 @@ export default function StudentJourney({ activeStepIndex = 3, onStepClick }) {
   const steps = [
     {
       num: 1,
-      title: "Discover Yourself",
+      title: "Register & Verify Identity",
       icon: UserCheck,
       color: "from-blue-500 to-cyan-400",
       dotColor: "bg-cyan-400",
-      description: "AI analyzes your resume, academics, projects, skills, and interests.",
+      description: "Face recognition (FaceVerify) & profile setup for verified assessment credentials.",
       status: "completed"
     },
     {

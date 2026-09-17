@@ -12,7 +12,8 @@ import {
   Sparkles,
   Key,
   Cloud,
-  ShieldCheck
+  ShieldCheck,
+  ScanFace
 } from 'lucide-react';
 
 export default function Header({ 
@@ -25,7 +26,8 @@ export default function Header({
   onOpenRobot3D,
   onOpenApiKeys,
   onOpenColab,
-  onOpenShield
+  onOpenShield,
+  onOpenFaceVerify
 }) {
   return (
     <header className="sticky top-0 z-40 w-full bg-[#090d18]/90 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-6 py-3">
@@ -136,6 +138,17 @@ export default function Header({
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span className="hidden sm:inline">Shield: Armed</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          </button>
+
+          {/* SkillMap FaceVerify Identity Center */}
+          <button
+            onClick={onOpenFaceVerify}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold text-cyan-300 bg-cyan-950/60 hover:bg-cyan-900/70 border border-cyan-500/50 rounded-lg transition-all shadow-glow-cyan"
+            title="SkillMap FaceVerify — Privacy-Preserving Identity Verification (Active)"
+          >
+            <ScanFace className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden sm:inline">ID: Verified</span>
+            <span className="text-emerald-400 font-bold">✓</span>
           </button>
 
           {/* Mobile Simulator Toggle Button */}

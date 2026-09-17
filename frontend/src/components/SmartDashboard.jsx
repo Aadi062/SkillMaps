@@ -12,7 +12,8 @@ import {
   Target,
   Code,
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  ScanFace
 } from 'lucide-react';
 
 export default function SmartDashboard({ 
@@ -21,7 +22,8 @@ export default function SmartDashboard({
   roadmap, 
   onViewSkillGaps, 
   onViewRoadmap,
-  onNavigateTab
+  onNavigateTab,
+  onOpenFaceVerify
 }) {
   const readiness = profile?.career_readiness_score || 82;
   const avgMatch = profile?.avg_skill_match || 84;
@@ -57,16 +59,34 @@ export default function SmartDashboard({
 
   return (
     <div className="glass-panel rounded-2xl p-5 border border-slate-800/80 flex flex-col justify-between">
-      {/* Greeting Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+      {/* Greeting Header & Verified Identity Badge */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 p-4 rounded-2xl bg-gradient-to-r from-slate-900/90 via-indigo-950/20 to-slate-900/90 border border-slate-800">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            Welcome back, {profile?.name?.split(" ")[0] || "Rajat"}! <span className="animate-bounce inline-block">👋</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Here's your career overview for today. Your profile is ranked in the top 8% of applicants.
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              Welcome back, {profile?.name?.split(" ")[0] || "Rajat"}! <span className="animate-bounce inline-block">👋</span>
+            </h2>
+            <button
+              onClick={onOpenFaceVerify}
+              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 text-xs font-bold shadow-glow-emerald cursor-pointer hover:bg-emerald-900/80 transition-all"
+              title="Click to view FaceVerify identity verification checkpoint"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Identity: Verified ✅</span>
+            </button>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            {profile?.headline || "Full Stack & AI Engineer Aspirant"} • Top 8% Candidate Benchmark
           </p>
         </div>
+
+        <button
+          onClick={onOpenFaceVerify}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-semibold text-slate-200 transition-all shrink-0 hover:border-cyan-500/40 shadow-glow-cyan"
+        >
+          <ScanFace className="w-4 h-4 text-cyan-400" />
+          <span>Biometric ID Center</span>
+        </button>
       </div>
 
       {/* 4 Overview Metric Cards */}

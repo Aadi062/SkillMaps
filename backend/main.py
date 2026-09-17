@@ -15,6 +15,7 @@ from services.job_service import get_opportunities
 from services.roadmap_service import get_recommended_roadmap
 from services.interview_service import evaluate_interview_response, SAMPLE_QUESTIONS
 from services.shield_service import security_shield
+from services.face_verify_service import face_verify_service
 
 # Initialize tables
 Base.metadata.create_all(bind=engine)
@@ -106,6 +107,11 @@ CURRENT_PROFILE = {
     "streak_days": 12,
     "career_readiness_score": 82,
     "avg_skill_match": 84,
+    "identity_verified": True,
+    "identity_provider": "SkillMap FaceVerify",
+    "identity_badge": "Identity: Verified ✅",
+    "face_verified_at": "2026-09-10 09:30:00",
+    "confidence_score": 98.4,
     "job_roles_analyzed": 12,
     "projects_completed_count": 5,
     "assessments_taken_count": 18,
@@ -699,3 +705,82 @@ def reset_security_stats():
         "message": "Security telemetry re-calibrated successfully.",
         "stats": security_shield.stats
     }
+
+# =====================================================================
+# SkillMap FaceVerify 🛡️ — Privacy-Preserving Identity Verification Gate
+# =====================================================================
+
+class FaceVerifyRequest(BaseModel):
+    student_id: Optional[str] = "student_rajat"
+    image_base64: Optional[str] = None
+    is_simulation: Optional[bool] = False
+    context: Optional[str] = "Skill Assessment Gate"
+
+class FaceEnrollRequest(BaseModel):
+    student_id: Optional[str] = "student_rajat"
+    student_name: Optional[str] = "Rajat Verma"
+    email: Optional[str] = "rajat.verma@example.edu"
+    image_base64: Optional[str] = None
+    consent_granted: bool = True
+
+class OtpVerifyRequest(BaseModel):
+    student_id: Optional[str] = "student_rajat"
+    code: str = "123456"
+
+@app.get("/api/faceverify/status")
+def get_face_verify_status(student_id: Optional[str] = "student_rajat"):
+    """Returns live student identity verification status and privacy policies."""
+    status = face_verify_service.get_status(student_id)
+    status["profile_identity_verified"] = CURRENT_PROFILE.get("identity_verified", True)
+    return status
+
+@app.post("/api/faceverify/verify")
+def verify_face_identity(payload: FaceVerifyRequest):
+    """
+    Live biometric identity checkpoint before assessments & AI interviews.
+    Verifies probe image against registered mathematical template.
+    """
+    result = face_verify_service.verify_live_face(
+        student_id=payload.student_id or "student_rajat",
+        image_input=payload.image_base64,
+        is_simulation=payload.is_simulation,
+        target_context=payload.context or "Assessment Gate"
+    )
+    if result.get("verified"):
+        CURRENT_PROFILE["identity_verified"] = True
+        CURRENT_PROFILE["face_verified_at"] = result.get("verified_at")
+        CURRENT_PROFILE["confidence_score"] = result.get("confidence_score", 98.4)
+    return result
+
+@app.post("/api/faceverify/enroll")
+def enroll_face_template(payload: FaceEnrollRequest):
+    """Enrolls initial student face template with explicit consent declaration."""
+    result = face_verify_service.enroll_template(
+        student_id=payload.student_id or "student_rajat",
+        student_name=payload.student_name or "Rajat Verma",
+        email=payload.email or "rajat.verma@example.edu",
+        image_input=payload.image_base64,
+        consent_granted=payload.consent_granted
+    )
+    if result.get("success"):
+        CURRENT_PROFILE["identity_verified"] = True
+    return result
+
+@app.post("/api/faceverify/otp")
+def verify_otp_alternative(payload: OtpVerifyRequest):
+    """Non-biometric 2FA alternative for students who opt out of camera biometrics."""
+    result = face_verify_service.verify_non_biometric_otp(
+        student_id=payload.student_id or "student_rajat",
+        code=payload.code
+    )
+    if result.get("verified"):
+        CURRENT_PROFILE["identity_verified"] = True
+    return result
+
+@app.post("/api/faceverify/delete")
+def delete_face_biometrics(student_id: Optional[str] = "student_rajat"):
+    """Enforces Right to be Forgotten: Permanently deletes student biometric vectors."""
+    result = face_verify_service.delete_template(student_id or "student_rajat")
+    CURRENT_PROFILE["identity_verified"] = False
+    return result
+
