@@ -923,4 +923,9 @@ def logout_user():
     """Logs out student on backend."""
     return {"status": "success", "message": "Logged out successfully"}
 
+# Include Phase 2 Modular Users Router (/api/users)
+from app.routes.users import users_router
+app.include_router(users_router)
+
+
 

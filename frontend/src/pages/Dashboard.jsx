@@ -23,6 +23,7 @@ import ApiKeyManagerModal from '../components/ApiKeyManagerModal';
 import ColabModal from '../components/ColabModal';
 import SecurityShieldModal from '../components/SecurityShieldModal';
 import FaceVerifyModal from '../components/FaceVerifyModal';
+import StudentProfileModal from '../components/StudentProfileModal';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import Login from './Login';
 import Register from './Register';
@@ -59,6 +60,7 @@ export default function Dashboard() {
   const [viewMode, setViewMode] = useState('desktop'); // 'desktop' or 'mobile'
   
   // Modals
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   const [isArchitectureModalOpen, setIsArchitectureModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -130,6 +132,7 @@ export default function Dashboard() {
         viewMode={viewMode}
         setViewMode={setViewMode}
         onOpenReport={() => setIsReportModalOpen(true)}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
         onOpenArchitecture={() => setIsArchitectureModalOpen(true)}
         onOpenResumeModal={() => setIsResumeModalOpen(true)}
         onOpenRobot3D={() => setActiveTab('robot3d')}
@@ -518,7 +521,7 @@ export default function Dashboard() {
       <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
         {/* Expanded 3D Floating Companion Window */}
         {isFloatingRobotOpen && (
-          <div className="w-[320px] h-[380px] rounded-3xl bg-[#0b0f19]/95 border border-cyan-500/50 shadow-2xl p-4 flex flex-col justify-between animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="w-[360px] sm:w-[420px] h-[520px] rounded-3xl bg-[#0b0f19]/95 border border-cyan-500/50 shadow-2xl p-4 flex flex-col justify-between animate-in fade-in slide-in-from-bottom-5 duration-300">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -616,6 +619,14 @@ export default function Dashboard() {
         isOpen={isFaceVerifyModalOpen}
         onClose={() => setIsFaceVerifyModalOpen(false)}
         onVerificationSuccess={handleFaceVerified}
+      />
+
+      <StudentProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        onProfileUpdated={(updated) => {
+          setProfile((prev) => ({ ...(prev || {}), ...updated }));
+        }}
       />
     </div>
   );

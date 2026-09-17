@@ -37,9 +37,24 @@ def init_db():
                 conn = sqlite3.connect(db_file)
                 cursor = conn.cursor()
                 cols = [c[1] for c in cursor.execute("PRAGMA table_info(students)").fetchall()]
-                if "career_goal" not in cols:
-                    cursor.execute("ALTER TABLE students ADD COLUMN career_goal VARCHAR DEFAULT 'Full Stack Developer'")
-                    conn.commit()
+                
+                columns_to_add = [
+                    ("career_goal", "VARCHAR DEFAULT 'Full Stack Developer'"),
+                    ("headline", "VARCHAR DEFAULT 'Full Stack & AI Engineer Aspirant'"),
+                    ("bio", "TEXT DEFAULT 'Passionate computer science student building real-world AI and web applications.'"),
+                    ("college", "VARCHAR DEFAULT 'Indian Institute of Technology'"),
+                    ("degree", "VARCHAR DEFAULT 'B.Tech Computer Science & Engineering'"),
+                    ("graduation_year", "INTEGER DEFAULT 2027"),
+                    ("cgpa", "REAL DEFAULT 8.8"),
+                    ("location", "VARCHAR DEFAULT 'Bengaluru, India'"),
+                    ("target_role", "VARCHAR DEFAULT 'Full Stack Developer'"),
+                    ("github_url", "VARCHAR DEFAULT 'https://github.com/Aadi062'"),
+                    ("linkedin_url", "VARCHAR DEFAULT 'https://linkedin.com/in/rajat-verma'")
+                ]
+                for col_name, col_def in columns_to_add:
+                    if col_name not in cols:
+                        cursor.execute(f"ALTER TABLE students ADD COLUMN {col_name} {col_def}")
+                conn.commit()
                 conn.close()
         except Exception as e:
             print(f"Migration note: {e}")

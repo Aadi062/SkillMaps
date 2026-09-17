@@ -1,3 +1,42 @@
+
+import re
+from typing import Optional, Dict, Any, List
+
+def extract_voice_action(msg: str, reply: str) -> Optional[str]:
+    """Maps voice queries and advice to platform navigation tabs."""
+    m = msg.lower()
+    if any(k in m for k in ["roadmap", "10-week", "3-month", "month plan", "curriculum", "schedule"]):
+        return "roadmap"
+    if any(k in m for k in ["gap", "weak", "lacking", "docker", "skill gap"]):
+        return "gap"
+    if any(k in m for k in ["job", "apply", "opportunities", "internship", "hiring", "vacancy"]):
+        return "opportunities"
+    if any(k in m for k in ["interview", "mock", "quiz", "test me"]):
+        return "interview"
+    if any(k in m for k in ["portfolio", "shareable", "profile link"]):
+        return "portfolio"
+    if any(k in m for k in ["career dna", "radar", "competency", "best career", "ranking"]):
+        return "careerdna"
+    if any(k in m for k in ["verify", "code challenge", "assessment"]):
+        return "verification"
+    if any(k in m for k in ["quest", "project", "build"]):
+        return "quests"
+    return None
+
+def extract_spoken_summary(reply: str) -> str:
+    """Converts rich markdown coach advice into concise, audio-optimized speech script."""
+    clean = re.sub(r'[*_#`]', '', reply)
+    clean = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'', clean)
+    clean = re.sub(r'•\s*', '', clean)
+    clean = re.sub(r'├──\s*|└──\s*|│\s*', '', clean)
+    clean = re.sub(r'\(.*?\)', '', clean)
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    
+    sentences = [s.strip() for s in clean.split('.') if len(s.strip()) > 10]
+    if sentences:
+        return ". ".join(sentences[:2]) + "."
+    return clean[:160] + "."
+
 from typing import Dict, Any, List, Optional
 
 # Pre-computed rich career intelligence dialogues mapped to the student's live profile
@@ -191,7 +230,7 @@ COACH_INTELLIGENCE_REGISTRY = {
     }
 }
 
-def generate_coach_response(user_message: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
+def _core_generate_coach_response(user_message: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     Generates intelligent, context-aware AI Career Coach guidance with deep profile memory,
     intent classification, explainable reasoning, and 7 coach modes.
@@ -352,3 +391,16 @@ def generate_coach_response(user_message: str, profile_data: Dict[str, Any]) -> 
             "why": "Composite score aggregated from verified skill assessments, project artifacts, and interview benchmarks."
         }
 
+
+
+def generate_coach_response(user_message: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Enhanced with Embodied AI Voice Metadata:
+    Returns 'action' (navigation intent) and 'spoken_summary' (TTS-optimized audio script).
+    """
+    res = _core_generate_coach_response(user_message, profile_data)
+    msg = user_message.lower().strip()
+    res["action"] = extract_voice_action(msg, res.get("reply", ""))
+    res["spoken_summary"] = extract_spoken_summary(res.get("reply", ""))
+    res["avatar_state"] = "celebrating" if any(w in msg for w in ["congrats", "pass", "complete", "won"]) else "speaking"
+    return res

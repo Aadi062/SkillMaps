@@ -26,6 +26,7 @@ export default function Header({
   viewMode, 
   setViewMode, 
   onOpenReport, 
+  onOpenProfile,
   onOpenArchitecture,
   onOpenResumeModal,
   onOpenRobot3D,
@@ -246,12 +247,16 @@ export default function Header({
                   <button
                     onClick={() => {
                       setDropdownOpen(false);
-                      onOpenReport && onOpenReport();
+                      if (onOpenProfile) {
+                        onOpenProfile();
+                      } else if (onOpenReport) {
+                        onOpenReport();
+                      }
                     }}
                     className="w-full px-3 py-2 text-xs rounded-xl hover:bg-slate-800/80 flex items-center gap-2.5 text-slate-300 hover:text-white transition-colors text-left cursor-pointer"
                   >
                     <UserIcon className="w-4 h-4 text-indigo-400" />
-                    <span>👤 My Profile & Report</span>
+                    <span>👤 My Profile & Degree</span>
                   </button>
 
                   <button
