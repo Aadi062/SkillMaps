@@ -60,6 +60,67 @@ SkillMap AI guides students through **The Complete Student Journey**:
 
 ---
 
+## 📁 Project Structure
+
+```
+skillmap/
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   └── Dashboard.jsx
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx
+│   │   ├── services/
+│   │   │   ├── firebase.js
+│   │   │   └── api.js
+│   │   └── App.jsx
+│   └── package.json
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── routes/
+│   │   │   ├── auth.py
+│   │   │   └── users.py
+│   │   ├── middleware/
+│   │   │   └── auth.py
+│   │   └── database/
+│   │       └── database.py
+│   ├── services/
+│   ├── tests/
+│   └── requirements.txt
+│
+└── README.md
+```
+
+---
+
+## 🚀 12-Phase Development Order
+
+1. **PHASE 1: 🔐 Login / Register / Logout** *(Completed)*
+   - Firebase Authentication + Zero-Password PostgreSQL/SQLite User Store.
+   - Professional Login screen with Password Eye toggle, Google OAuth, and 1-Click Demo Logins.
+   - Registration screen with Full Name, Email, Password verification, and Career Goal selection.
+   - Top-right Profile Dropdown (`👤 [User Name] ▼`) with quick access to Profile, Settings, Security, and Logout.
+2. **PHASE 2: 👤 Student Profile & Learning DNA**
+3. **PHASE 3: 📄 Resume Upload & Parsing Engine**
+4. **PHASE 4: 🧠 AI Resume & Skill Extraction**
+5. **PHASE 5: 🧪 Skill Assessment & Verification**
+6. **PHASE 6: 💼 Job Matching & Opportunity Engine**
+7. **PHASE 7: 📊 Skill Gap + Career Readiness**
+8. **PHASE 8: 🤖 AI Career Coach**
+9. **PHASE 9: 🎤 AI Interview Simulator**
+10. **PHASE 10: 📷 Facial Identity Verification (FaceVerify)**
+11. **PHASE 11: 🛡️ SkillMap Shield / Cybersecurity Gateway**
+12. **PHASE 12: 🏆 Portfolio + College TPO Dashboard**
+
+
+---
+
 ## 🚀 Quick Start (Run Locally)
 
 ### Prerequisites
