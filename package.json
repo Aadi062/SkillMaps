@@ -1,10 +1,10 @@
 {
-  "name": "skillmap-ai-root",
+  "name": "skillmap-ai",
   "version": "1.0.0",
   "private": true,
   "description": "SkillMap AI - AI Career Intelligence & Verification Platform",
   "scripts": {
-    "build": "node build.js",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
     "start": "node serve-app.js",
     "dev": "npm --prefix frontend run dev"
   }

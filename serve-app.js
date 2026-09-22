@@ -3,24 +3,14 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// Determine best production directory
-const possibleDirs = [
-  path.join(__dirname, 'frontend', 'dist'),
-  path.join(__dirname, 'dist'),
-  path.join(__dirname, 'build'),
-  __dirname
-];
+const distDir = path.join(__dirname, 'frontend', 'dist');
+const indexHtml = path.join(distDir, 'index.html');
 
-let distDir = possibleDirs.find((dir) => fs.existsSync(path.join(dir, 'index.html'))) || possibleDirs[0];
-let indexHtml = path.join(distDir, 'index.html');
-
-// Compile if no target contains index.html
+// 1. Compile frontend if missing
 if (!fs.existsSync(indexHtml)) {
-  console.log('==> [SkillMap AI] Production build not found. Compiling frontend now...');
+  console.log('==> [SkillMap AI] Production build not found. Building frontend now...');
   try {
-    execSync('node build.js', { stdio: 'inherit' });
-    distDir = possibleDirs.find((dir) => fs.existsSync(path.join(dir, 'index.html'))) || __dirname;
-    indexHtml = path.join(distDir, 'index.html');
+    execSync('npm --prefix frontend install && npm --prefix frontend run build', { stdio: 'inherit' });
     console.log('==> [SkillMap AI] Build completed successfully.');
   } catch (err) {
     console.error('==> [SkillMap AI] Build failed:', err);
@@ -30,7 +20,7 @@ if (!fs.existsSync(indexHtml)) {
 
 console.log(`==> [SkillMap AI] Serving production assets from: ${distDir}`);
 
-// MIME Types dictionary
+// 2. MIME Types dictionary
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -47,13 +37,13 @@ const MIME_TYPES = {
   '.webmanifest': 'application/manifest+json'
 };
 
-// Robust Native HTTP Server (Zero Dependencies, Render & Cloud Optimized)
+// 3. Robust Native HTTP Server (Zero Dependencies, Render & Cloud Optimized)
 const port = parseInt(process.env.PORT, 10) || 3000;
 const server = http.createServer((req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = parsedUrl.pathname;
 
-  // Handle Render & Cloud Health Checks (HEAD or GET /)
+  // Handle Render health checks: HEAD or GET /
   if (req.method === 'HEAD' && (pathname === '/' || pathname === '/index.html')) {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end();
