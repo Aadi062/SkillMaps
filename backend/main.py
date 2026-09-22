@@ -2,7 +2,7 @@ import os
 import json
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -186,7 +186,11 @@ class ResumeTextRequest(BaseModel):
     resume_text: str
 
 @app.get("/")
-def root():
+def root(request: Request):
+    index_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist", "index.html"))
+    accept = request.headers.get("accept", "")
+    if "text/html" in accept and os.path.exists(index_file):
+        return FileResponse(index_file)
     return {
         "name": "SkillMap AI Core Gateway",
         "tagline": "Discover your career. Prove your skills. Build your future.",
@@ -926,6 +930,27 @@ def logout_user():
 # Include Phase 2 Modular Users Router (/api/users)
 from app.routes.users import users_router
 app.include_router(users_router)
+
+# Production SPA Static Files & Client Routing Fallback
+from fastapi.staticfiles import StaticFiles
+
+frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
+if os.path.exists(frontend_dist):
+    assets_dir = os.path.join(frontend_dist, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="static_assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa_frontend(full_path: str):
+        if full_path.startswith("api") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+            raise HTTPException(status_code=404, detail="API endpoint not found")
+        file_path = os.path.join(frontend_dist, full_path)
+        if full_path and os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        index_file = os.path.join(frontend_dist, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Index file not found")
 
 
 

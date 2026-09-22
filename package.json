@@ -4,9 +4,9 @@
   "private": true,
   "description": "SkillMap AI - AI Career Intelligence & Verification Platform",
   "scripts": {
-    "postinstall": "npm --prefix frontend install",
+    "postinstall": "npm --prefix frontend install && npm --prefix frontend run build",
     "build": "npm --prefix frontend install && npm --prefix frontend run build",
-    "start": "npx serve -s frontend/dist -l $PORT || npm --prefix frontend run preview -- --port $PORT --host 0.0.0.0",
+    "start": "node serve-app.js",
     "dev": "npm --prefix frontend run dev"
   },
   "dependencies": {

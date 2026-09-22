@@ -15,6 +15,8 @@ import {
   Layers
 } from 'lucide-react';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 export default function ColabModal({ isOpen, onClose }) {
   const [colabConfig, setColabConfig] = useState(null);
   const [colabStatus, setColabStatus] = useState(null);
@@ -26,8 +28,8 @@ export default function ColabModal({ isOpen, onClose }) {
     async function loadData() {
       try {
         const [cfgRes, statRes] = await Promise.all([
-          fetch('http://localhost:8000/api/colab/config'),
-          fetch('http://localhost:8000/api/colab/status')
+          fetch(`${API_BASE}/api/colab/config`),
+          fetch(`${API_BASE}/api/colab/status`)
         ]);
         if (cfgRes.ok) {
           const cfg = await cfgRes.json();
@@ -45,13 +47,15 @@ export default function ColabModal({ isOpen, onClose }) {
       loadData();
       const timer = setInterval(async () => {
         try {
-          const res = await fetch('http://localhost:8000/api/colab/status');
+          const res = await fetch(`${API_BASE}/api/colab/status`);
           if (res.ok) {
             const data = await res.json();
             setColabStatus(data);
           }
-        } catch (err) {}
-      }, 3000);
+        } catch (err) {
+          // Poll failed silently
+        }
+      }, 5000);
       return () => clearInterval(timer);
     }
   }, [isOpen]);
@@ -77,7 +81,7 @@ export default function ColabModal({ isOpen, onClose }) {
   const handleDownloadNotebook = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:8000/api/colab/notebook');
+      const res = await fetch(`${API_BASE}/api/colab/notebook`);
       if (res.ok) {
         const data = await res.json();
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });

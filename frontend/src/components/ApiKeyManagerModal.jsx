@@ -19,6 +19,8 @@ import {
   ExternalLink 
 } from 'lucide-react';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 export default function ApiKeyManagerModal({ isOpen, onClose }) {
   const [keys, setKeys] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,7 +33,7 @@ export default function ApiKeyManagerModal({ isOpen, onClose }) {
   const loadKeys = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:8000/api/config/keys');
+      const res = await fetch(`${API_BASE}/api/config/keys`);
       if (res.ok) {
         const data = await res.json();
         setKeys(data.keys || []);
@@ -64,7 +66,7 @@ export default function ApiKeyManagerModal({ isOpen, onClose }) {
   const handleRegenerateAll = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:8000/api/config/keys/regenerate', { method: 'POST' });
+      const res = await fetch(`${API_BASE}/api/config/keys/regenerate`, { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
         setKeys(data.keys || []);
@@ -80,7 +82,7 @@ export default function ApiKeyManagerModal({ isOpen, onClose }) {
 
   const handleCopyEnv = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/config/env-file');
+      const res = await fetch(`${API_BASE}/api/config/env-file`);
       if (res.ok) {
         const data = await res.json();
         navigator.clipboard.writeText(data.content);
@@ -94,7 +96,7 @@ export default function ApiKeyManagerModal({ isOpen, onClose }) {
 
   const handleDownloadEnv = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/config/env-file');
+      const res = await fetch(`${API_BASE}/api/config/env-file`);
       if (res.ok) {
         const data = await res.json();
         const blob = new Blob([data.content], { type: 'text/plain' });
