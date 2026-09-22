@@ -3,18 +3,30 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const distDir = path.join(__dirname, 'frontend', 'dist');
-const indexHtml = path.join(distDir, 'index.html');
+let distDir = path.join(__dirname, 'frontend', 'dist');
+let indexHtml = path.join(distDir, 'index.html');
 
-// 1. Guarantee production build exists
+// 1. Locate or compile production build
 if (!fs.existsSync(indexHtml)) {
-  console.log('==> [SkillMap AI] Production build not found. Building frontend now...');
-  try {
-    execSync('npm --prefix frontend install && npm --prefix frontend run build', { stdio: 'inherit' });
-    console.log('==> [SkillMap AI] Build completed successfully.');
-  } catch (err) {
-    console.error('==> [SkillMap AI] Build failed:', err);
-    process.exit(1);
+  if (fs.existsSync(path.join(__dirname, 'dist', 'index.html'))) {
+    distDir = path.join(__dirname, 'dist');
+    indexHtml = path.join(distDir, 'index.html');
+  } else {
+    console.log('==> [SkillMap AI] Production build not found. Compiling frontend now...');
+    try {
+      execSync('npm --prefix frontend install && npm --prefix frontend run build', { stdio: 'inherit' });
+      if (fs.existsSync(path.join(__dirname, 'frontend', 'dist'))) {
+        try {
+          fs.cpSync(path.join(__dirname, 'frontend', 'dist'), path.join(__dirname, 'dist'), { recursive: true });
+        } catch (e) {}
+      }
+      distDir = path.join(__dirname, 'frontend', 'dist');
+      indexHtml = path.join(distDir, 'index.html');
+      console.log('==> [SkillMap AI] Build completed successfully.');
+    } catch (err) {
+      console.error('==> [SkillMap AI] Build failed:', err);
+      process.exit(1);
+    }
   }
 }
 
@@ -41,7 +53,7 @@ const server = http.createServer((req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = parsedUrl.pathname;
 
-  // Handle Render & Cloud Health Checks
+  // Handle Render & Cloud Health Checks (HEAD or GET /)
   if (req.method === 'HEAD' && (pathname === '/' || pathname === '/index.html')) {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end();
