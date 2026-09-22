@@ -4,12 +4,9 @@
   "private": true,
   "description": "SkillMap AI - AI Career Intelligence & Verification Platform",
   "scripts": {
-    "postinstall": "npm --prefix frontend install && npm --prefix frontend run build && node -e \"require('fs').cpSync('frontend/dist', 'dist', {recursive: true})\"",
-    "build": "npm --prefix frontend install && npm --prefix frontend run build && node -e \"require('fs').cpSync('frontend/dist', 'dist', {recursive: true})\"",
+    "postinstall": "npm --prefix frontend install && npm --prefix frontend run build",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
     "start": "node serve-app.js",
     "dev": "npm --prefix frontend run dev"
-  },
-  "dependencies": {
-    "serve": "^14.2.4"
   }
 }
