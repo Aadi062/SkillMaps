@@ -1,13 +1,27 @@
 services:
+  # SkillMap AI - Backend Python / FastAPI Engine
   - type: web
     name: skillmap-backend
     env: python
     region: oregon
     plan: free
-    buildCommand: "pip install -r backend/requirements.txt python-multipart"
-    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.8
       - key: DATABASE_URL
-        sync: false # Set to your Neon.tech connection string
+        sync: false
+
+  # SkillMap AI - Frontend React + Vite + Three.js
+  - type: web
+    name: skillmap-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "./dist"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

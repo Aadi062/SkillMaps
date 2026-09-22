@@ -1,0 +1,15 @@
+{
+  "name": "skillmap-ai-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SkillMap AI - AI Career Intelligence & Verification Platform",
+  "scripts": {
+    "postinstall": "npm --prefix frontend install",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "start": "npx serve -s frontend/dist -l $PORT || npm --prefix frontend run preview -- --port $PORT --host 0.0.0.0",
+    "dev": "npm --prefix frontend run dev"
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
