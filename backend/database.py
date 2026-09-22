@@ -2,10 +2,11 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Support Neon.tech PostgreSQL via environment variable, fallback cleanly to local SQLite
+# Support Neon.tech PostgreSQL via environment variable, fallback cleanly to local SQLite (or /tmp on Vercel)
+default_sqlite = "/tmp/skillmap.db" if os.getenv("VERCEL") else "./skillmap.db"
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "sqlite:///./skillmap.db"
+    f"sqlite:///{default_sqlite}"
 )
 
 # Handle Neon/Render postgres:// vs postgresql:// prefix
