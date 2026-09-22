@@ -14,7 +14,7 @@ import {
 } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyMockKeyForDevelopmentOnly12345678",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "skillmap-ai-production.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "skillmap-ai-production",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "skillmap-ai-production.appspot.com",
@@ -28,10 +28,14 @@ let googleProvider;
 let isMockAuth = false;
 
 try {
-  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-  auth = getAuth(app);
-  googleProvider = new GoogleAuthProvider();
-  googleProvider.setCustomParameters({ prompt: 'select_account' });
+  if (firebaseConfig.apiKey && firebaseConfig.apiKey.length > 20 && !firebaseConfig.apiKey.includes("YOUR_")) {
+    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+    auth = getAuth(app);
+    googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: 'select_account' });
+  } else {
+    isMockAuth = true;
+  }
 } catch (err) {
   console.warn("Firebase initialization warning (using local fallback):", err.message);
   isMockAuth = true;
