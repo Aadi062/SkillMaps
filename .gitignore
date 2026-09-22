@@ -1,8 +1,10 @@
 # Node & Frontend
 node_modules/
 frontend/node_modules/
-dist/
-build/
+/dist/
+/build/
+!frontend/dist/
+!frontend/dist/**
 frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
