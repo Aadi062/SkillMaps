@@ -28,7 +28,22 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
+    global engine, SessionLocal, DATABASE_URL, is_sqlite
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as exc:
+        if is_sqlite:
+            raise
+
+        # Keep the web service bootable when a hosted database URL is missing or unavailable.
+        # Render logs the original error so the DATABASE_URL can be corrected without hiding it.
+        print(f"Database connection unavailable: {exc}")
+        DATABASE_URL = "sqlite:///./skillmap.db"
+        is_sqlite = True
+        engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False}, echo=False)
+        SessionLocal.configure(bind=engine)
+        Base.metadata.create_all(bind=engine)
+
     # Ensure newly added columns exist in SQLite if table already existed
     if is_sqlite:
         import sqlite3
