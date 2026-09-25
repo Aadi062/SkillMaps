@@ -32,22 +32,24 @@ class ProfileUpdatePayload(BaseModel):
     avatar_url: Optional[str] = None
 
 @users_router.get("/profile")
-def get_profile(request: Request, db: Session = Depends(get_db)):
+def get_profile(
+    request: Request,
+    claims: Optional[Dict[str, Any]] = Depends(get_current_user_claims),
+    db: Session = Depends(get_db)
+):
     """Returns the authenticated student profile details."""
-    auth_header = request.headers.get("Authorization", "")
-    token = auth_header.replace("Bearer ", "").strip() if auth_header.startswith("Bearer ") else None
-    
     student = None
-    if token:
-        from services.auth_service import verify_session_token
-        claims = verify_session_token(token)
-        if claims:
-            student = db.query(models.Student).filter(models.Student.id == claims.get("sub")).first()
+    if claims and claims.get("sub"):
+        student = db.query(models.Student).filter(models.Student.id == claims.get("sub")).first()
     
     if not student:
-        claims = get_current_user_claims()
-        if claims:
-            student = db.query(models.Student).filter(models.Student.id == claims.get("sub")).first()
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.replace("Bearer ", "").strip() if auth_header.startswith("Bearer ") else None
+        if token:
+            from services.auth_service import verify_session_token
+            header_claims = verify_session_token(token)
+            if header_claims and header_claims.get("sub"):
+                student = db.query(models.Student).filter(models.Student.id == header_claims.get("sub")).first()
 
     if not student:
         student = db.query(models.Student).first()

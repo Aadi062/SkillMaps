@@ -17,7 +17,7 @@ def get_current_user_claims(
     credentials: Optional[HTTPAuthorizationCredentials] = Security(security)
 ) -> Optional[Dict[str, Any]]:
     """Extracts and verifies JWT session claims from Bearer header."""
-    if not isinstance(credentials, HTTPAuthorizationCredentials):
+    if not credentials or not isinstance(credentials, HTTPAuthorizationCredentials):
         return None
     return verify_session_token(credentials.credentials)
 
@@ -25,7 +25,7 @@ def require_auth(
     credentials: Optional[HTTPAuthorizationCredentials] = Security(security)
 ) -> Dict[str, Any]:
     """Enforces authentication; raises 401 if missing or invalid."""
-    if not isinstance(credentials, HTTPAuthorizationCredentials):
+    if not credentials or not isinstance(credentials, HTTPAuthorizationCredentials):
         raise HTTPException(status_code=401, detail="Authentication token required.")
     claims = verify_session_token(credentials.credentials)
     if not claims:

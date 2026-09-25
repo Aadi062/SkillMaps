@@ -33,7 +33,8 @@ export default function Header({
   onOpenApiKeys,
   onOpenColab,
   onOpenShield,
-  onOpenFaceVerify
+  onOpenFaceVerify,
+  onOpenCommandCenter
 }) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const { logout, currentUser } = useAuth();
@@ -99,6 +100,16 @@ export default function Header({
           </div>
 
           {/* 3D Robot Moderator Button */}
+          <button
+            onClick={onOpenCommandCenter}
+            className="hidden lg:flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-cyan-200 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-400/30 rounded-lg transition-all"
+            title="Open command center"
+          >
+            <Search className="w-3.5 h-3.5 text-cyan-300" />
+            <span>Command</span>
+            <kbd className="rounded border border-cyan-300/25 px-1.5 py-0.5 text-[9px] text-cyan-200/60">Ctrl K</kbd>
+          </button>
+
           <button
             onClick={onOpenRobot3D}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-cyan-300 bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/50 rounded-xl transition-all shadow-glow-cyan"

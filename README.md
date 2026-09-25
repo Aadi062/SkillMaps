@@ -187,3 +187,11 @@ npm run build
 - **Render**: Configured in `render.yaml` for FastAPI web service deployment.
 - **CI/CD**: Configured in `.github/workflows/ci.yml` running automated tests on every push and PR.
 - **Database**: To connect Neon.tech PostgreSQL, set `DATABASE_URL` in `.env`.
+
+### Release Readiness Checklist
+- [x] Frontend build passes with Vite
+- [x] Backend runs with Uvicorn
+- [x] Deployment configs exist for Vercel and Render
+- [x] Environment variables can be defined via `.env.example` files
+- [x] Bundle splitting is enabled for production optimization
+- [x] Local checks verify the app is responding on port 5173 and 8000

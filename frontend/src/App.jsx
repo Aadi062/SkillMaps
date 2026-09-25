@@ -32,7 +32,27 @@ function AuthGate() {
 export default function App() {
   return (
     <AuthProvider>
-      <AuthGate />
+      <div className="hacker-shell">
+        <div className="hacker-shell__grid" aria-hidden="true" />
+        <div className="hacker-shell__vignette" aria-hidden="true" />
+        <div className="hacker-shell__scanlines" aria-hidden="true" />
+        <div className="hacker-shell__signal" aria-hidden="true" />
+        <div className="hacker-shell__corner hacker-shell__corner--tl" aria-hidden="true" />
+        <div className="hacker-shell__corner hacker-shell__corner--tr" aria-hidden="true" />
+        <div className="hacker-shell__corner hacker-shell__corner--bl" aria-hidden="true" />
+        <div className="hacker-shell__corner hacker-shell__corner--br" aria-hidden="true" />
+        <div className="hacker-shell__hud" aria-hidden="true">
+          <span>GEN-ALPHA</span>
+          <span className="pulse-dot" />
+          <span>LIVE</span>
+        </div>
+        <div className="hacker-shell__status" aria-hidden="true">
+          <span>ACCESS GRID</span>
+          <span className="hacker-shell__status--divider" />
+          <span>STABLE</span>
+        </div>
+        <AuthGate />
+      </div>
     </AuthProvider>
   );
 }

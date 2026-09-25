@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse, FileResponse
@@ -177,6 +178,12 @@ CURRENT_PROFILE = {
 class ChatRequest(BaseModel):
     message: str
 
+
+def _split_coach_questions(message: str) -> List[str]:
+    """Split a batch of user questions while keeping each question intact."""
+    chunks = [chunk.strip(" \t\r\n-•") for chunk in re.split(r"(?<=[?])\s+|[\r\n]+", message)]
+    return [chunk for chunk in chunks if len(chunk) >= 8]
+
 class InterviewEvalRequest(BaseModel):
     role: str = "Python Developer"
     question_id: str = "q1"
@@ -302,8 +309,29 @@ def coach_chat(payload: ChatRequest):
             "why_explanation": "SkillMap Shield AI Prompt Guard monitors incoming queries against OWASP LLM01:2025 prompt injection and system override signatures."
         }
 
-    res = generate_coach_response(payload.message, CURRENT_PROFILE)
-    return res
+    questions = _split_coach_questions(payload.message)
+    if len(questions) <= 1:
+        return generate_coach_response(payload.message, CURRENT_PROFILE)
+
+    answers = [generate_coach_response(question, CURRENT_PROFILE) for question in questions]
+    combined_reply = "\n\n".join(
+        f"**Question {index}: {question}**\n\n{answer['reply']}"
+        for index, (question, answer) in enumerate(zip(questions, answers), start=1)
+    )
+    actions = list(dict.fromkeys(action for answer in answers for action in answer.get("suggested_actions", [])))[:8]
+    evidence = list(dict.fromkeys(signal for answer in answers for signal in answer.get("evidence", [])))[:8]
+    confidence = sum(answer.get("confidence", 0.78) for answer in answers) / len(answers)
+    return {
+        "mode": "multi-answer",
+        "reply": combined_reply,
+        "answers": answers,
+        "question_count": len(questions),
+        "suggested_actions": actions,
+        "evidence": evidence,
+        "confidence": round(confidence, 2),
+        "follow_up": "Which answer should I turn into a detailed action plan first?",
+        "why": "Each question was classified independently against the profile, skill gaps, roadmap, and opportunity signals.",
+    }
 
 @app.get("/api/interview/questions")
 def get_interview_questions():

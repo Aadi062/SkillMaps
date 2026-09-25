@@ -24,6 +24,9 @@ import ColabModal from '../components/ColabModal';
 import SecurityShieldModal from '../components/SecurityShieldModal';
 import FaceVerifyModal from '../components/FaceVerifyModal';
 import StudentProfileModal from '../components/StudentProfileModal';
+import CommandCenter from '../components/CommandCenter';
+import DailyMissionPanel from '../components/DailyMissionPanel';
+import CareerOpsConsole from '../components/CareerOpsConsole';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import Login from './Login';
 import Register from './Register';
@@ -69,6 +72,18 @@ export default function Dashboard() {
   const [isColabModalOpen, setIsColabModalOpen] = useState(false);
   const [isShieldModalOpen, setIsShieldModalOpen] = useState(false);
   const [isFaceVerifyModalOpen, setIsFaceVerifyModalOpen] = useState(false);
+  const [isCommandCenterOpen, setIsCommandCenterOpen] = useState(false);
+
+  useEffect(() => {
+    const handleCommandShortcut = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setIsCommandCenterOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleCommandShortcut);
+    return () => window.removeEventListener('keydown', handleCommandShortcut);
+  }, []);
 
   useEffect(() => {
     async function initData() {
@@ -140,6 +155,13 @@ export default function Dashboard() {
         onOpenColab={() => setIsColabModalOpen(true)}
         onOpenShield={() => setIsShieldModalOpen(true)}
         onOpenFaceVerify={() => setIsFaceVerifyModalOpen(true)}
+        onOpenCommandCenter={() => setIsCommandCenterOpen(true)}
+      />
+
+      <CommandCenter
+        open={isCommandCenterOpen}
+        onClose={() => setIsCommandCenterOpen(false)}
+        onNavigate={setActiveTab}
       />
 
       <div className="flex-1 flex w-full">
@@ -173,6 +195,8 @@ export default function Dashboard() {
               {/* 1. DASHBOARD TAB */}
               {activeTab === 'dashboard' && (
                 <div className="space-y-6">
+                  <CareerOpsConsole profile={profile} roadmap={roadmap} onNavigateTab={setActiveTab} />
+                  <DailyMissionPanel profile={profile} onNavigate={setActiveTab} />
                   <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
                     {/* Left Column: AI Career DNA & Top Matches + Gamification */}
                     <div className="xl:col-span-4 flex flex-col gap-5">

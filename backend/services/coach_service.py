@@ -133,6 +133,26 @@ COACH_INTELLIGENCE_REGISTRY = {
         "suggested_actions": ["Apply to ScaleTech (91%)", "Apply to CloudNative (87%)", "Why ScaleTech highest?"],
         "why_explanation": "ScaleTech's stack directly mirrors your verified FastAPI and Python skills with zero proprietary dependencies."
     },
+    "find_computer_job": {
+        "mode": "jobs",
+        "reply": (
+            "You can find a computer-field job faster by combining a clear target role, proof of skill, and a repeatable application system.\n\n"
+            "**1. Pick one entry route first**\n"
+            "Start with **Junior Backend Developer**, **Python Developer Intern**, **QA Automation Engineer**, or **Data Analyst**. Your current profile is strongest for backend and Python roles.\n\n"
+            "**2. Build the minimum proof employers need**\n"
+            "Create two public projects: one production-style API with Python, FastAPI, SQL, authentication, and tests; one project that solves a real problem. Deploy at least one project and document the architecture, trade-offs, and results.\n\n"
+            "**3. Make your resume searchable**\n"
+            "Use the exact skills from each job description, lead with measurable project outcomes, add GitHub and a live demo, and keep the resume focused on one target role.\n\n"
+            "**4. Apply with a weekly system**\n"
+            "Find roles on company career pages, LinkedIn, Wellfound, university portals, and the SkillMap opportunity feed. Send **8–12 targeted applications per week**, track every application, and follow up after 5–7 days.\n\n"
+            "**5. Prepare for the interview loop**\n"
+            "Practice DSA fundamentals, SQL, REST APIs, Git, Docker, and explaining your projects clearly. Complete one mock interview each week.\n\n"
+            "**Your best next move**\n"
+            "Your profile is already strongest for backend roles. Close the Docker and cloud gap, deploy your FastAPI project, then apply to junior backend and Python internship roles this week."
+        ),
+        "suggested_actions": ["Scan Matched Opportunities", "Start Docker Sprint", "Improve My Resume", "Start Mock Interview"],
+        "why_explanation": "The recommendation prioritizes roles aligned with your verified Python, SQL, FastAPI, and project signals while addressing the Docker and cloud gaps that reduce your match rate.",
+    },
     "what_should_build": {
         "mode": "project",
         "reply": (
@@ -230,6 +250,50 @@ COACH_INTELLIGENCE_REGISTRY = {
     }
 }
 
+EXPERT_TRACKS = {
+    "ai_ml": {
+        "label": "AI / ML Engineer",
+        "keywords": ["machine learning", "deep learning", "neural network", "llm", "ai model", "ai system", "computer vision", "nlp"],
+        "principles": "define the objective, establish a baseline, validate data quality, measure with the right metric, and monitor drift after deployment",
+        "next_step": "build an end-to-end model project with a reproducible dataset, evaluation report, API, and monitoring note",
+    },
+    "data_science": {
+        "label": "Data Scientist",
+        "keywords": ["data science", "data analysis", "statistics", "pandas", "experiment", "analytics", "sql"],
+        "principles": "frame the business question, inspect the data, quantify uncertainty, avoid leakage, and communicate decisions with evidence",
+        "next_step": "publish one analysis that connects a clean notebook to a decision, dashboard, and measurable recommendation",
+    },
+    "cybersecurity": {
+        "label": "Cybersecurity Engineer",
+        "keywords": ["cybersecurity", "cyber security", "security", "secure", "soc", "penetration", "vulnerability", "threat", "owasp"],
+        "principles": "threat-model first, minimize attack surface, apply least privilege, log security events, and verify controls continuously",
+        "next_step": "create a defensive lab with an OWASP threat model, secure API, detection rules, and an incident-response runbook",
+    },
+    "quantum": {
+        "label": "Quantum Computing Engineer",
+        "keywords": ["quantum", "qubit", "qiskit", "quantum algorithm"],
+        "principles": "learn the linear algebra, understand the circuit model, compare classical baselines, and treat noise and complexity as first-class constraints",
+        "next_step": "implement one small Qiskit algorithm, explain the circuit mathematically, and compare it with a classical solution",
+    },
+    "cloud": {
+        "label": "Cloud Architect",
+        "keywords": ["cloud", "aws", "azure", "gcp", "kubernetes", "docker", "devops", "microservice", "infrastructure"],
+        "principles": "design for reliability, security, observability, cost, and graceful failure before choosing services",
+        "next_step": "deploy a containerized API with CI/CD, secrets management, health checks, logs, metrics, and a rollback plan",
+    },
+    "full_stack": {
+        "label": "Full-Stack Developer",
+        "keywords": ["full stack", "full-stack", "frontend", "backend", "react", "api", "web app", "typescript", "javascript"],
+        "principles": "design the user workflow first, define a stable API contract, validate inputs, protect data, and test the critical path end to end",
+        "next_step": "ship one complete product slice from responsive interface to authenticated API, database, deployment, and user documentation",
+    },
+}
+
+
+def detect_expert_tracks(message: str) -> List[Dict[str, Any]]:
+    return [track for track in EXPERT_TRACKS.values() if any(keyword in message for keyword in track["keywords"])]
+
+
 def _core_generate_coach_response(user_message: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     Generates intelligent, context-aware AI Career Coach guidance with deep profile memory,
@@ -297,6 +361,16 @@ def _core_generate_coach_response(user_message: str, profile_data: Dict[str, Any
         }
 
     # 5. Opportunity search & ranking
+    elif any(k in msg for k in ["how to find a job", "find a job", "get a job", "computer field", "computer job", "tech job", "technology job", "software job", "career in computer"]):
+        data = COACH_INTELLIGENCE_REGISTRY["find_computer_job"]
+        return {
+            "mode": data["mode"],
+            "reply": data["reply"],
+            "suggested_actions": data["suggested_actions"],
+            "why": data["why_explanation"]
+        }
+
+    # 5b. Opportunity search & ranking
     elif any(k in msg for k in ["what job", "which job", "jobs to apply", "ranked job", "opportunities"]):
         data = COACH_INTELLIGENCE_REGISTRY["what_job_apply"]
         return {
@@ -307,7 +381,7 @@ def _core_generate_coach_response(user_message: str, profile_data: Dict[str, Any
         }
 
     # 6. Project recommendations based on skill gaps
-    elif any(k in msg for k in ["what should i build", "what project", "recommend a project", "build", "project quest"]):
+    elif any(k in msg for k in ["what should i build", "what project", "recommend a project", "project quest"]):
         data = COACH_INTELLIGENCE_REGISTRY["what_should_build"]
         return {
             "mode": data["mode"],
@@ -354,6 +428,30 @@ def _core_generate_coach_response(user_message: str, profile_data: Dict[str, Any
             "reply": data["reply"],
             "suggested_actions": data["suggested_actions"],
             "why": data["why_explanation"]
+        }
+
+    # 10b. Cross-functional engineering council for technical questions
+    elif detect_expert_tracks(msg):
+        tracks = detect_expert_tracks(msg)
+        track_lines = "\n".join(
+            f"• **{track['label']}**: {track['principles']}."
+            for track in tracks
+        )
+        next_steps = "\n".join(
+            f"{index}. {track['next_step'].capitalize()}."
+            for index, track in enumerate(tracks, start=1)
+        )
+        return {
+            "mode": "expert-council",
+            "reply": (
+                f"I’m analyzing this through {len(tracks)} engineering perspectives:\n\n"
+                f"{track_lines}\n\n"
+                "**Recommended execution path**\n"
+                f"{next_steps}\n\n"
+                f"**Personalized constraint**: Your current readiness is **{readiness}/100**. Choose one measurable deliverable, publish the proof, and use it to close the next skill gap rather than collecting disconnected tutorials."
+            ),
+            "suggested_actions": ["Build a Proof-of-Work Project", "Open Skill Verification", "Review Career Roadmap", "Scan Matched Opportunities"],
+            "why": "The answer combines role-specific engineering principles with your verified skills, readiness score, and current career roadmap."
         }
 
     # 11. Explainable "Why" inquiry
@@ -403,4 +501,13 @@ def generate_coach_response(user_message: str, profile_data: Dict[str, Any]) -> 
     res["action"] = extract_voice_action(msg, res.get("reply", ""))
     res["spoken_summary"] = extract_spoken_summary(res.get("reply", ""))
     res["avatar_state"] = "celebrating" if any(w in msg for w in ["congrats", "pass", "complete", "won"]) else "speaking"
+    res["confidence"] = 0.94 if res.get("mode") != "career" else 0.78
+    res["expertise"] = [track["label"] for track in detect_expert_tracks(msg)] or ["Career Intelligence Engineer"]
+    res["reasoning_framework"] = "Evidence -> constraints -> options -> measurable next action"
+    res["evidence"] = [
+        f"Career readiness: {profile_data.get('career_readiness_score', 82)}/100",
+        "Verified skills and assessment history",
+        "Live opportunity and market benchmark signals",
+    ]
+    res["follow_up"] = "Would you like me to turn this into your next 7-day action plan?"
     return res

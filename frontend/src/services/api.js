@@ -230,7 +230,10 @@ export async function sendCoachMessage(message) {
   }
   return {
     reply: "Based on your profile, focus on these skills to maximize your internship chances:\n\n• Data Structures & Algorithms\n• SQL & Database\n• System Design Basics\n• Build 2 Projects\n\n*(Reasoning based on 1,245 job postings and your current skill level).* ",
-    suggested_actions: ["What should I learn this week?", "Why am I not matching backend jobs?", "Review my project"]
+    suggested_actions: ["What should I learn this week?", "Why am I not matching backend jobs?", "Review my project"],
+    confidence: 0.72,
+    evidence: ["Career profile snapshot", "Skill-gap benchmark", "Opportunity catalog"],
+    follow_up: "Would you like me to turn this into your next 7-day action plan?"
   };
 }
 

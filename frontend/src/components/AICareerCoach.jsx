@@ -82,6 +82,20 @@ const SUGGESTIONS_BY_MODE = {
   ]
 };
 
+function renderCoachText(text) {
+  return text.split('\n').map((line, lineIndex) => {
+    const parts = line.split(/(\*\*[^*]+\*\*)/g);
+    return (
+      <React.Fragment key={`${line}-${lineIndex}`}>
+        {parts.map((part, partIndex) => part.startsWith('**') && part.endsWith('**')
+          ? <strong key={partIndex} className="font-bold text-cyan-100">{part.slice(2, -2)}</strong>
+          : <React.Fragment key={partIndex}>{part}</React.Fragment>)}
+        {lineIndex < text.split('\n').length - 1 && <br />}
+      </React.Fragment>
+    );
+  });
+}
+
 export default function AICareerCoach({ profile, onNavigateTab }) {
   const [show3D, setShow3D] = useState(false);
   const [activeMode, setActiveMode] = useState('all');
@@ -158,7 +172,12 @@ export default function AICareerCoach({ profile, onNavigateTab }) {
           text: response.reply,
           actions: response.suggested_actions || [],
           why: response.why || null,
-          mode: response.mode || 'career'
+          mode: response.mode || 'career',
+          confidence: response.confidence,
+          evidence: response.evidence || [],
+          followUp: response.follow_up,
+          expertise: response.expertise || [],
+          reasoning: response.reasoning_framework
         }
       ]);
       setRobotStatus('💡 Recommendation Ready');
@@ -291,9 +310,32 @@ export default function AICareerCoach({ profile, onNavigateTab }) {
                         : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
                     }`}
                   >
-                    <div className="whitespace-pre-line text-xs font-normal">
-                      {m.text}
-                    </div>
+                    <div className="text-xs font-normal">{renderCoachText(m.text)}</div>
+
+                    {isBot && (m.confidence || m.evidence?.length > 0) && (
+                      <div className="mt-3 grid gap-2 border-t border-cyan-300/10 pt-2">
+                        <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-500">
+                          <span>Answer confidence</span>
+                          <span className="font-bold text-emerald-300">{Math.round((m.confidence || 0) * 100)}%</span>
+                        </div>
+                        {m.evidence?.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5">
+                            {m.evidence.map((signal) => (
+                              <span key={signal} className="rounded-md border border-cyan-300/15 bg-cyan-300/5 px-2 py-1 text-[10px] text-cyan-100/65">{signal}</span>
+                            ))}
+                          </div>
+                        )}
+                        {m.expertise?.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5">
+                            {m.expertise.map((expertise) => (
+                              <span key={expertise} className="rounded-md border border-indigo-300/20 bg-indigo-300/10 px-2 py-1 text-[10px] text-indigo-100/75">{expertise}</span>
+                            ))}
+                          </div>
+                        )}
+                        {m.reasoning && <div className="text-[10px] text-slate-400">Framework: {m.reasoning}</div>}
+                        {m.followUp && <div className="text-[10px] italic text-amber-200/70">{m.followUp}</div>}
+                      </div>
+                    )}
 
                     {/* Explainable Why Drawer */}
                     {isBot && m.why && (
