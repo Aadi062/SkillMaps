@@ -4,10 +4,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Support Neon.tech PostgreSQL via environment variable, fallback cleanly to local SQLite (or /tmp on Vercel)
 default_sqlite = "/tmp/skillmap.db" if os.getenv("VERCEL") else "./skillmap.db"
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    f"sqlite:///{default_sqlite}"
-)
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip() or f"sqlite:///{default_sqlite}"
 
 # Handle Neon/Render postgres:// vs postgresql:// prefix
 if DATABASE_URL.startswith("postgres://"):
@@ -17,11 +14,13 @@ is_sqlite = DATABASE_URL.startswith("sqlite")
 
 connect_args = {"check_same_thread": False} if is_sqlite else {}
 
-engine = create_engine(
-    DATABASE_URL,
-    connect_args=connect_args,
-    echo=False
-)
+try:
+    engine = create_engine(DATABASE_URL, connect_args=connect_args, echo=False)
+except Exception as exc:
+    print(f"Invalid DATABASE_URL; using SQLite fallback: {exc}")
+    DATABASE_URL = f"sqlite:///{default_sqlite}"
+    is_sqlite = True
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False}, echo=False)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
