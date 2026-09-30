@@ -1,0 +1,115 @@
+{
+  "name": "Goa Heritage - Source Cross-Check",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "goa-source-check",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "5cf2d79f-28c7-4e2d-80e7-2a17e4698103",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "goa-source-check"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://en.wikipedia.org/w/rest.php/v1/search/page?q=' + encodeURIComponent($('Webhook').first().json.body.query) + '&limit=1' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "GoaHeritagePrototype/1.0 (source cross-reference demo)"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "9e2d4f29-8bb4-49c8-aa23-f6aa9b4f3c5a",
+      "name": "Search Wikimedia",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const request = $('Webhook').first().json.body || {};\nconst page = $input.first().json.pages?.[0];\nconst query = String(request.query || '').trim();\nif (query.length < 2 || query.length > 120) {\n  throw new Error('query must be between 2 and 120 characters');\n}\nconst terms = [...new Set(query.toLowerCase().match(/[a-z0-9]{3,}/g) || [])];\nconst text = [page?.title, page?.description, page?.excerpt].filter(Boolean).join(' ').toLowerCase();\nconst matchedTerms = terms.filter(term => text.includes(term));\nconst confidence = terms.length ? Math.round(matchedTerms.length / terms.length * 100) : 0;\nconst found = Boolean(page);\nreturn [{ json: {\n  requestId: String(Date.now()),\n  query,\n          status: !found ? 'no_reference_found' : confidence >= 70 ? 'reference_found' : 'needs_review',\n  confidence,\n  matchedTerms,\n  totalTerms: terms.length,\n  reference: page ? {\n    title: page.title,\n    description: page.description || '',\n    excerpt: String(page.excerpt || '').replace(/<[^>]*>/g, ''),\n    url: 'https://en.wikipedia.org/wiki/' + encodeURIComponent(page.title.replaceAll(' ', '_'))\n  } : null,\n  message: 'A Wikipedia match is a lead for human review, not proof or official verification.',\n  pipeline: [\n    { name: 'Receive place or claim', status: 'complete' },\n    { name: 'Query Wikimedia reference index', status: 'complete' },\n    { name: 'Compare matching terms', status: 'complete' },\n    { name: 'Return cited result for human review', status: 'complete' }\n  ]\n} }];"
+      },
+      "id": "87a0dbaf-10bd-40d7-926c-e4c0e2f81435",
+      "name": "Compare & Build Trace",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [710, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "95a391e8-8d49-4e6b-8d71-9a5d72e80703",
+      "name": "Return Review Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [950, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Search Wikimedia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Wikimedia": {
+      "main": [
+        [
+          {
+            "node": "Compare & Build Trace",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare & Build Trace": {
+      "main": [
+        [
+          {
+            "node": "Return Review Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "be603e5d-85d4-4453-a35a-0f96ea3d4152",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
